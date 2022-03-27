@@ -276,13 +276,13 @@ export default class Body {
 
     this.m_jointList = null;
     this.m_contactList = null;
+    this.m_controllerCount = 0.0;
     this.m_fixtureList = null;
 
     this.m_prev = null;
     this.m_next = null;
 
     this.m_destroyed = false;
-    this.m_controllerCount = 0.0;
   }
 
   /** @internal */

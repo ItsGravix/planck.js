@@ -50,7 +50,7 @@ export default class BuoyancyController extends Controller {
             let area: number = 0.0;
             let mass: number = 0.0;
 
-            for (let fixture: Fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
+            for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
                 const sc: Vec2 = new Vec2();
                 // TODO: ChainShape submerged area
                 const sarea: number = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
@@ -68,7 +68,7 @@ export default class BuoyancyController extends Controller {
                     shapeDensity = 1;
                 }
 
-                mass += sarea*shapeDensity;
+                mass += sarea * shapeDensity;
                 massc.x += sarea * sc.x * shapeDensity;
                 massc.y += sarea * sc.y * shapeDensity;
             }
@@ -83,7 +83,7 @@ export default class BuoyancyController extends Controller {
             }
 
             //Buoyancy
-            const buoyancyForce: Vec2 = this.gravity.neg();
+            const buoyancyForce: Vec2 = this.gravity.neg().clone();
             buoyancyForce.mul(this.density * area);
             body.applyForce(buoyancyForce, massc);
 

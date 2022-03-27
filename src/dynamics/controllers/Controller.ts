@@ -17,10 +17,11 @@ export default class Controller {
     /** @internal */
     m_bodyList: ControllerEdge | null = null;
     /** @internal */
-    m_bodyCount: number;
+    m_bodyCount: number = 0;
     /** @internal */
     m_world: World;
 
+    // TODO: Add createController to world
     constructor(world: World) {
         this.m_world = world;
     }
@@ -67,24 +68,18 @@ export default class Controller {
             edge = edge.nextController;
         }
 
-        if (edge.prevBody) {
+        if (edge.prevBody)
             edge.prevBody.nextBody = edge.nextBody;
-        }
-        if (edge.nextBody) {
+        if (edge.nextBody)
             edge.nextBody.prevBody = edge.prevBody;
-        }
-        if (edge.nextController) {
+        if (edge.nextController)
             edge.nextController.prevController = edge.prevController;
-        }
-        if (edge.prevController) {
+        if (edge.prevController)
             edge.prevController.nextController = edge.nextController;
-        }
-        if (this.m_bodyList == edge) {
+        if (this.m_bodyList == edge)
             this.m_bodyList = edge.nextBody;
-        }
-        if (body.m_controllerList == edge) {
+        if (body.m_controllerList == edge)
             body.m_controllerList = edge.nextController;
-        }
 
         body.m_controllerCount--;
         this.m_bodyCount--;
