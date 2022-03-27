@@ -3115,6 +3115,7 @@
             this.m_prev = null;
             this.m_next = null;
             this.m_destroyed = false;
+            this.m_controllerCount = 0.0;
         }
         /** @internal */
         Body.prototype._serialize = function () {
@@ -8346,6 +8347,9 @@
             proxy.m_count = 2;
             proxy.m_radius = this.m_radius;
         };
+        EdgeShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
+            return 0;
+        };
         EdgeShape.TYPE = 'edge';
         return EdgeShape;
     }(Shape));
@@ -8642,6 +8646,9 @@
             proxy.m_vertices = proxy.m_buffer;
             proxy.m_count = 2;
             proxy.m_radius = this.m_radius;
+        };
+        ChainShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
+            return 0;
         };
         ChainShape.TYPE = 'chain';
         return ChainShape;
@@ -9045,6 +9052,9 @@
             proxy.m_count = this.m_count;
             proxy.m_radius = this.m_radius;
         };
+        PolygonShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
+            return 0;
+        };
         PolygonShape.TYPE = 'polygon';
         return PolygonShape;
     }(Shape));
@@ -9285,6 +9295,27 @@
             proxy.m_vertices.push(this.m_p);
             proxy.m_count = 1;
             proxy.m_radius = this.m_radius;
+        };
+        CircleShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
+            var p = Transform.mulVec2(xf, this.m_p);
+            var l = -(Vec2.dot(normal, p) - offset);
+            if (l < -this.m_radius + math$1.EPSILON) {
+                //Completely dry
+                return 0;
+            }
+            if (l > this.m_radius) {
+                //Completely wet
+                c.setVec2(p);
+                return math$1.PI * this.m_radius * this.m_radius;
+            }
+            //Magic
+            var r2 = this.m_radius * this.m_radius;
+            var l2 = l * l;
+            var area = r2 * (math$1.asin(l / this.m_radius) + math$1.PI / 2) + l * math$1.sqrt(r2 - l2);
+            var com = -2 / 3 * math$1.pow(r2 - l2, 1.5) / area;
+            c.x = p.x + normal.x * com;
+            c.y = p.y + normal.y * com;
+            return area;
         };
         CircleShape.TYPE = 'circle';
         return CircleShape;
@@ -14765,24 +14796,165 @@
         manifold.pointCount = pointCount;
     }
 
+    var ControllerEdge = /** @class */ (function () {
+        function ControllerEdge() {
+            this.prevBody = null;
+            this.nextBody = null;
+        }
+        return ControllerEdge;
+    }());
+
     var Controller = /** @class */ (function () {
-        function Controller() {
+        function Controller(world) {
             /** @internal */
             this.m_next = null;
             /** @internal */
             this.m_prev = null;
             /** @internal */
             this.m_bodyList = null;
-            console.log('hi');
+            this.m_world = world;
         }
+        Controller.prototype.step = function (step) {
+        };
+        Controller.prototype.draw = function (step) {
+        };
+        Controller.prototype.addBody = function (body) {
+            var edge = new ControllerEdge();
+            edge.controller = this;
+            edge.body = body;
+            edge.nextBody = this.m_bodyList;
+            edge.prevBody = null;
+            this.m_bodyList = edge;
+            if (edge.nextBody) {
+                edge.nextBody.prevBody = edge;
+            }
+            this.m_bodyCount++;
+            edge.nextController = body.m_controllerList;
+            edge.prevController = null;
+            body.m_controllerList = edge;
+            if (edge.nextController) {
+                edge.nextController.prevController = edge;
+            }
+            body.m_controllerCount++;
+        };
+        Controller.prototype.removeBody = function (body) {
+            var edge = body.m_controllerList;
+            while (edge && edge.controller != this) {
+                edge = edge.nextController;
+            }
+            if (edge.prevBody) {
+                edge.prevBody.nextBody = edge.nextBody;
+            }
+            if (edge.nextBody) {
+                edge.nextBody.prevBody = edge.prevBody;
+            }
+            if (edge.nextController) {
+                edge.nextController.prevController = edge.prevController;
+            }
+            if (edge.prevController) {
+                edge.prevController.nextController = edge.nextController;
+            }
+            if (this.m_bodyList == edge) {
+                this.m_bodyList = edge.nextBody;
+            }
+            if (body.m_controllerList == edge) {
+                body.m_controllerList = edge.nextController;
+            }
+            body.m_controllerCount--;
+            this.m_bodyCount--;
+        };
+        Controller.prototype.clear = function () {
+            while (this.m_bodyList) {
+                this.removeBody(this.m_bodyList.body);
+            }
+        };
+        Controller.prototype.getNext = function () {
+            return this.m_next;
+        };
+        Controller.prototype.getWorld = function () {
+            return this.m_world;
+        };
+        Controller.prototype.getBodyList = function () {
+            return this.m_bodyList;
+        };
         return Controller;
     }());
 
-    var ControllerEdge = /** @class */ (function () {
-        function ControllerEdge() {
+    var BuoyancyController = /** @class */ (function (_super) {
+        __extends(BuoyancyController, _super);
+        function BuoyancyController(world) {
+            var _this = _super.call(this, world) || this;
+            _this.normal = new Vec2(0, -1);
+            _this.offset = 0;
+            _this.density = 0;
+            _this.velocity = new Vec2(0, 0);
+            _this.linearDrag = 2;
+            _this.angularDrag = 1;
+            _this.useDensity = false;
+            _this.useWorldGravity = true;
+            _this.gravity = null;
+            return _this;
         }
-        return ControllerEdge;
-    }());
+        BuoyancyController.prototype.step = function (step) {
+            if (!this.m_bodyList) {
+                return;
+            }
+            if (this.useWorldGravity) {
+                this.gravity = this.getWorld().getGravity().clone();
+            }
+            for (var i = this.m_bodyList; i; i = i.nextBody) {
+                var body = i.body;
+                if (body.isAwake() == false) {
+                    //Buoyancy force is just a function of position,
+                    //so unlike most forces, it is safe to ignore sleeping bodes
+                    continue;
+                }
+                var areac = new Vec2();
+                var massc = new Vec2();
+                var area = 0.0;
+                var mass = 0.0;
+                for (var fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
+                    var sc = new Vec2();
+                    // TODO: ChainShape submerged area
+                    var sarea = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
+                    area += sarea;
+                    areac.x += sarea * sc.x;
+                    areac.y += sarea * sc.y;
+                    var shapeDensity = void 0;
+                    if (this.useDensity) {
+                        //TODO: Figure out what to do now density is gone
+                        shapeDensity = 1;
+                    }
+                    else {
+                        shapeDensity = 1;
+                    }
+                    mass += sarea * shapeDensity;
+                    massc.x += sarea * sc.x * shapeDensity;
+                    massc.y += sarea * sc.y * shapeDensity;
+                }
+                areac.x /= area;
+                areac.y /= area;
+                massc.x /= mass;
+                massc.y /= mass;
+                if (area < math$1.EPSILON) {
+                    continue;
+                }
+                //Buoyancy
+                var buoyancyForce = this.gravity.neg();
+                buoyancyForce.mul(this.density * area);
+                body.applyForce(buoyancyForce, massc);
+                //Linear drag
+                var dragForce = body.getLinearVelocityFromWorldPoint(areac);
+                dragForce.sub(this.velocity);
+                dragForce.mul(-this.linearDrag * area);
+                body.applyForce(dragForce, areac);
+                //Angular drag
+                //TODO: Something that makes more physical sense?
+                body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);
+            }
+        };
+        return BuoyancyController;
+    }(Controller));
 
     // @ts-ignore
     Solver.TimeStep = TimeStep;
@@ -19042,6 +19214,7 @@
     exports.AABB = AABB;
     exports.Body = Body;
     exports.Box = BoxShape;
+    exports.BuoyancyController = BuoyancyController;
     exports.Chain = ChainShape;
     exports.Circle = CircleShape;
     exports.CollideCircles = CollideCircles;

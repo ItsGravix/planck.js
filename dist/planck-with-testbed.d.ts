@@ -2135,6 +2135,7 @@ declare abstract class Shape {
      */
     abstract computeMass(massData: MassData, density?: number): void;
     abstract computeDistanceProxy(proxy: DistanceProxy, childIndex: number): void;
+    abstract computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
 }
 type ShapeType = "circle" | "edge" | "polygon" | "chain";
 declare const CircleShape: {
@@ -2189,6 +2190,7 @@ declare interface CircleShape extends Shape {
      */
     computeMass(massData: MassData, density: number): void;
     computeDistanceProxy(proxy: DistanceProxy): void;
+    computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
 }
 declare const EdgeShape: {
     new (v1?: Vec2, v2?: Vec2): EdgeShape;
@@ -2269,6 +2271,7 @@ declare interface EdgeShape extends Shape {
      */
     computeMass(massData: MassData, density?: number): void;
     computeDistanceProxy(proxy: DistanceProxy): void;
+    computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
 }
 declare const PolygonShape: {
     // @ts-ignore
@@ -2333,6 +2336,7 @@ declare interface PolygonShape extends Shape {
      */
     validate(): boolean;
     computeDistanceProxy(proxy: DistanceProxy): void;
+    computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
 }
 declare const ChainShape: {
     new (vertices?: Vec2[], loop?: boolean): ChainShape;
@@ -2414,6 +2418,7 @@ declare interface ChainShape extends Shape {
      */
     computeMass(massData: MassData, density?: number): void;
     computeDistanceProxy(proxy: DistanceProxy, childIndex: number): void;
+    computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
 }
 declare const BoxShape: {
     new (hx: number, hy: number, center?: Vec2, angle?: number): BoxShape;
@@ -3925,10 +3930,37 @@ declare class TOIOutput {
  * the largest time at which separation is maintained.
  */
 declare function TimeOfImpact(output: TOIOutput, input: TOIInput): void;
-declare class Controller {
-    constructor();
-}
 declare class ControllerEdge {
+    controller: Controller;
+    body: Body;
+    prevBody: ControllerEdge | null;
+    nextBody: ControllerEdge | null;
+    prevController: ControllerEdge;
+    nextController: ControllerEdge;
+}
+declare class Controller {
+    constructor(world: World);
+    step(step: TimeStep): void;
+    draw(step: TimeStep): void;
+    addBody(body: Body): void;
+    removeBody(body: Body): void;
+    clear(): void;
+    getNext(): Controller;
+    getWorld(): World;
+    getBodyList(): ControllerEdge;
+}
+declare class BuoyancyController extends Controller {
+    normal: Vec2;
+    offset: number;
+    density: number;
+    velocity: Vec2;
+    linearDrag: number;
+    angularDrag: number;
+    useDensity: boolean;
+    useWorldGravity: boolean;
+    gravity: Vec2 | null;
+    constructor(world: World);
+    step(step: TimeStep): void;
 }
 interface ActiveKeys {
     0?: boolean;
@@ -4026,4 +4058,4 @@ declare function testbed(callback: (testbed: Testbed) => World): any;
 type _ContactImpulse$0 = InstanceType<typeof ContactImpulse>;
 /** @deprecated Merged with main namespace */
 declare const internal$0: {};
-export { ActiveKeys, Testbed, testbed, Serializer, math as Math, Vec2, Vec3, Mat22, Mat33, Transform, Rot, AABB, Shape, Fixture, Body, Contact, Joint, World, CircleShape as Circle, EdgeShape as Edge, PolygonShape as Polygon, ChainShape as Chain, BoxShape as Box, CollideCircles, CollideEdgeCircle, CollidePolygons, CollidePolygonCircle, CollideEdgePolygon, DistanceJoint, FrictionJoint, GearJoint, MotorJoint, MouseJoint, PrismaticJoint, PulleyJoint, RevoluteJoint, RopeJoint, WeldJoint, WheelJoint, Settings, Sweep, Manifold, Distance, TimeOfImpact, DynamicTree, Controller, ControllerEdge, _ContactImpulse$0 as ContactImpulse, internal$0 as internal };
+export { ActiveKeys, Testbed, testbed, Serializer, math as Math, Vec2, Vec3, Mat22, Mat33, Transform, Rot, AABB, Shape, Fixture, Body, Contact, Joint, World, CircleShape as Circle, EdgeShape as Edge, PolygonShape as Polygon, ChainShape as Chain, BoxShape as Box, CollideCircles, CollideEdgeCircle, CollidePolygons, CollidePolygonCircle, CollideEdgePolygon, DistanceJoint, FrictionJoint, GearJoint, MotorJoint, MouseJoint, PrismaticJoint, PulleyJoint, RevoluteJoint, RopeJoint, WeldJoint, WheelJoint, Settings, Sweep, Manifold, Distance, TimeOfImpact, DynamicTree, Controller, ControllerEdge, BuoyancyController, _ContactImpulse$0 as ContactImpulse, internal$0 as internal };
