@@ -875,6 +875,9 @@ export { default as Distance } from '../src/collision/Distance';
 export { default as TimeOfImpact } from '../src/collision/TimeOfImpact';
 export { default as DynamicTree } from '../src/collision/DynamicTree';
 
+export { default as Controller } from '../src/dynamics/controllers/Controller';
+export { default as ControllerEdge } from '../src/dynamics/controllers/ControllerEdge';
+
 import Solver, { TimeStep } from '../src/dynamics/Solver';
 import { CollidePolygons } from '../src/collision/shape/CollidePolygon';
 import { default as Settings } from '../src/Settings';

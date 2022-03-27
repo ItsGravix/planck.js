@@ -3925,6 +3925,11 @@ declare class TOIOutput {
  * the largest time at which separation is maintained.
  */
 declare function TimeOfImpact(output: TOIOutput, input: TOIInput): void;
+declare class Controller {
+    constructor();
+}
+declare class ControllerEdge {
+}
 interface ActiveKeys {
     0?: boolean;
     1?: boolean;
@@ -4021,4 +4026,4 @@ declare function testbed(callback: (testbed: Testbed) => World): any;
 type _ContactImpulse$0 = InstanceType<typeof ContactImpulse>;
 /** @deprecated Merged with main namespace */
 declare const internal$0: {};
-export { ActiveKeys, Testbed, testbed, Serializer, math as Math, Vec2, Vec3, Mat22, Mat33, Transform, Rot, AABB, Shape, Fixture, Body, Contact, Joint, World, CircleShape as Circle, EdgeShape as Edge, PolygonShape as Polygon, ChainShape as Chain, BoxShape as Box, CollideCircles, CollideEdgeCircle, CollidePolygons, CollidePolygonCircle, CollideEdgePolygon, DistanceJoint, FrictionJoint, GearJoint, MotorJoint, MouseJoint, PrismaticJoint, PulleyJoint, RevoluteJoint, RopeJoint, WeldJoint, WheelJoint, Settings, Sweep, Manifold, Distance, TimeOfImpact, DynamicTree, _ContactImpulse$0 as ContactImpulse, internal$0 as internal };
+export { ActiveKeys, Testbed, testbed, Serializer, math as Math, Vec2, Vec3, Mat22, Mat33, Transform, Rot, AABB, Shape, Fixture, Body, Contact, Joint, World, CircleShape as Circle, EdgeShape as Edge, PolygonShape as Polygon, ChainShape as Chain, BoxShape as Box, CollideCircles, CollideEdgeCircle, CollidePolygons, CollidePolygonCircle, CollideEdgePolygon, DistanceJoint, FrictionJoint, GearJoint, MotorJoint, MouseJoint, PrismaticJoint, PulleyJoint, RevoluteJoint, RopeJoint, WeldJoint, WheelJoint, Settings, Sweep, Manifold, Distance, TimeOfImpact, DynamicTree, Controller, ControllerEdge, _ContactImpulse$0 as ContactImpulse, internal$0 as internal };

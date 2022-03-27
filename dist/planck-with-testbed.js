@@ -14765,6 +14765,25 @@
         manifold.pointCount = pointCount;
     }
 
+    var Controller = /** @class */ (function () {
+        function Controller() {
+            /** @internal */
+            this.m_next = null;
+            /** @internal */
+            this.m_prev = null;
+            /** @internal */
+            this.m_bodyList = null;
+            console.log('hi');
+        }
+        return Controller;
+    }());
+
+    var ControllerEdge = /** @class */ (function () {
+        function ControllerEdge() {
+        }
+        return ControllerEdge;
+    }());
+
     // @ts-ignore
     Solver.TimeStep = TimeStep;
     // @ts-ignore
@@ -19031,6 +19050,8 @@
     exports.CollidePolygonCircle = CollidePolygonCircle;
     exports.CollidePolygons = CollidePolygons;
     exports.Contact = Contact;
+    exports.Controller = Controller;
+    exports.ControllerEdge = ControllerEdge;
     exports.Distance = Distance;
     exports.DistanceJoint = DistanceJoint;
     exports.DynamicTree = DynamicTree;
