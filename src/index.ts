@@ -51,6 +51,7 @@ export { default as DynamicTree } from './collision/DynamicTree';
 
 export { default as Controller } from './dynamics/controllers/Controller';
 export { default as ControllerEdge } from './dynamics/controllers/ControllerEdge';
+export { default as BuoyancyController } from './dynamics/controllers/BuoyancyController';
 
 import Solver, { TimeStep } from './dynamics/Solver';
 import { CollidePolygons } from './collision/shape/CollidePolygon';
