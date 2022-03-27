@@ -9299,7 +9299,7 @@
         CircleShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
             var p = Transform.mulVec2(xf, this.m_p);
             var l = -(Vec2.dot(normal, p) - offset);
-            if (l < -this.m_radius + math.EPSILON) {
+            if (l < -this.m_radius + Number.MIN_VALUE) {
                 //Completely dry
                 return 0;
             }
@@ -14933,7 +14933,7 @@
                 areac.y /= area;
                 massc.x /= mass;
                 massc.y /= mass;
-                if (area < math.EPSILON) {
+                if (area < Number.MIN_VALUE) {
                     continue;
                 }
                 //Buoyancy

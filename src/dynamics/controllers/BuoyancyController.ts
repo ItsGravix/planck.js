@@ -78,7 +78,7 @@ export default class BuoyancyController extends Controller {
             massc.x /= mass;
             massc.y /= mass;
 
-            if (area < Math.EPSILON) {
+            if (area < Number.MIN_VALUE) {
                 continue;
             }
 

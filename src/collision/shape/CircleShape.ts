@@ -214,7 +214,7 @@ export default class CircleShape extends Shape {
     const p: Vec2 = Transform.mulVec2(xf, this.m_p);
     const l: number = -(Vec2.dot(normal, p) - offset);
 
-    if (l < -this.m_radius + Math.EPSILON) {
+    if (l < -this.m_radius + Number.MIN_VALUE) {
       //Completely dry
       return 0;
     }
