@@ -3939,6 +3939,7 @@ declare class ControllerEdge {
     nextController: ControllerEdge;
 }
 declare class Controller {
+    // TODO: Add createController to world
     constructor(world: World);
     step(step: TimeStep): void;
     draw(step: TimeStep): void;

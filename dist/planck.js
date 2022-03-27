@@ -3111,11 +3111,11 @@
             this.m_sleepTime = 0.0;
             this.m_jointList = null;
             this.m_contactList = null;
+            this.m_controllerCount = 0.0;
             this.m_fixtureList = null;
             this.m_prev = null;
             this.m_next = null;
             this.m_destroyed = false;
-            this.m_controllerCount = 0.0;
         }
         /** @internal */
         Body.prototype._serialize = function () {
@@ -14805,6 +14805,7 @@
     }());
 
     var Controller = /** @class */ (function () {
+        // TODO: Add createController to world
         function Controller(world) {
             /** @internal */
             this.m_next = null;
@@ -14812,6 +14813,8 @@
             this.m_prev = null;
             /** @internal */
             this.m_bodyList = null;
+            /** @internal */
+            this.m_bodyCount = 0;
             this.m_world = world;
         }
         Controller.prototype.step = function (step) {
@@ -14842,24 +14845,18 @@
             while (edge && edge.controller != this) {
                 edge = edge.nextController;
             }
-            if (edge.prevBody) {
+            if (edge.prevBody)
                 edge.prevBody.nextBody = edge.nextBody;
-            }
-            if (edge.nextBody) {
+            if (edge.nextBody)
                 edge.nextBody.prevBody = edge.prevBody;
-            }
-            if (edge.nextController) {
+            if (edge.nextController)
                 edge.nextController.prevController = edge.prevController;
-            }
-            if (edge.prevController) {
+            if (edge.prevController)
                 edge.prevController.nextController = edge.nextController;
-            }
-            if (this.m_bodyList == edge) {
+            if (this.m_bodyList == edge)
                 this.m_bodyList = edge.nextBody;
-            }
-            if (body.m_controllerList == edge) {
+            if (body.m_controllerList == edge)
                 body.m_controllerList = edge.nextController;
-            }
             body.m_controllerCount--;
             this.m_bodyCount--;
         };
@@ -14940,11 +14937,11 @@
                     continue;
                 }
                 //Buoyancy
-                var buoyancyForce = this.gravity.neg();
+                var buoyancyForce = this.gravity.neg().clone();
                 buoyancyForce.mul(this.density * area);
                 body.applyForce(buoyancyForce, massc);
                 //Linear drag
-                var dragForce = body.getLinearVelocityFromWorldPoint(areac);
+                var dragForce = body.getLinearVelocityFromWorldPoint(areac).clone();
                 dragForce.sub(this.velocity);
                 dragForce.mul(-this.linearDrag * area);
                 body.applyForce(dragForce, areac);
