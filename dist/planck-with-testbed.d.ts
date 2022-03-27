@@ -411,6 +411,13 @@ declare class Transform {
     static mulAll(a: Transform, b: Vec2[]): Vec2[];
     static mulAll(a: Transform, b: Transform[]): Transform[];
     static mulVec2(a: Transform, b: Vec2): Vec2;
+    /*static mulMV(a: Rot, b: Vec2): Vec2 {
+    const x = (a.c * b.x + a.s * b.y);
+    const y = (a.s * b.x + a.c * b.y);
+    return Vec2.neo(x, y);
+    }*/
+    // I have no idea what is happening
+    static mulX(a: Transform, b: Vec2): Vec2;
     static mulXf(a: Transform, b: Transform): Transform;
     static mulT(a: Transform, b: Vec2): Vec2;
     static mulT(a: Transform, b: Transform): Transform;

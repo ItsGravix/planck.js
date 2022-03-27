@@ -182,6 +182,21 @@ export default class Transform {
     return Vec2.neo(x, y);
   }
 
+
+  /*static mulMV(a: Rot, b: Vec2): Vec2 {
+    const x = (a.c * b.x + a.s * b.y);
+    const y = (a.s * b.x + a.c * b.y);
+    return Vec2.neo(x, y);
+  }*/
+
+  // I have no idea what is happening
+  static mulX(a: Transform, b: Vec2): Vec2 {
+    const x = (a.q.c * b.x + a.q.s * b.y) + a.p.x;
+    const y = (a.q.s * b.x + a.q.c * b.y) + a.p.y;
+    return Vec2.neo(x, y);
+  }
+
+
   static mulXf(a: Transform, b: Transform): Transform {
     _ASSERT && Transform.assert(a);
     _ASSERT && Transform.assert(b);

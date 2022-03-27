@@ -211,7 +211,7 @@ export default class CircleShape extends Shape {
   }
 
   computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number {
-    const p: Vec2 = Transform.mulVec2(xf, this.m_p);
+    const p: Vec2 = Transform.mulX(xf, this.m_p);
     const l: number = -(Vec2.dot(normal, p) - offset);
 
     if (l < -this.m_radius + Number.MIN_VALUE) {

@@ -2373,6 +2373,17 @@
             var y = (a.q.s * b.x + a.q.c * b.y) + a.p.y;
             return Vec2.neo(x, y);
         };
+        /*static mulMV(a: Rot, b: Vec2): Vec2 {
+          const x = (a.c * b.x + a.s * b.y);
+          const y = (a.s * b.x + a.c * b.y);
+          return Vec2.neo(x, y);
+        }*/
+        // I have no idea what is happening
+        Transform.mulX = function (a, b) {
+            var x = (a.q.c * b.x + a.q.s * b.y) + a.p.x;
+            var y = (a.q.s * b.x + a.q.c * b.y) + a.p.y;
+            return Vec2.neo(x, y);
+        };
         Transform.mulXf = function (a, b) {
             // v2 = A.q.Rot(B.q.Rot(v1) + B.p) + A.p
             // = (A.q * B.q).Rot(v1) + A.q.Rot(B.p) + A.p
@@ -9297,7 +9308,7 @@
             proxy.m_radius = this.m_radius;
         };
         CircleShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
-            var p = Transform.mulVec2(xf, this.m_p);
+            var p = Transform.mulX(xf, this.m_p);
             var l = -(Vec2.dot(normal, p) - offset);
             if (l < -this.m_radius + Number.MIN_VALUE) {
                 //Completely dry
@@ -14936,6 +14947,7 @@
                 if (area < Number.MIN_VALUE) {
                     continue;
                 }
+                console.log('ASD');
                 //Buoyancy
                 var buoyancyForce = this.gravity.neg().clone();
                 buoyancyForce.mul(this.density * area);

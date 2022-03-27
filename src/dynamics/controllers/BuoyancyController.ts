@@ -82,6 +82,8 @@ export default class BuoyancyController extends Controller {
                 continue;
             }
 
+            console.log('ASD')
+
             //Buoyancy
             const buoyancyForce: Vec2 = this.gravity.neg().clone();
             buoyancyForce.mul(this.density * area);
