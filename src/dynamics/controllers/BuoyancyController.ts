@@ -14,10 +14,10 @@ const DEBUG_SOLVER = false;
 
 
 export default class BuoyancyController extends Controller {
-    normal: Vec2;
+    normal: Vec2 = new Vec2(0, -1);
     offset: number = 0;
     density: number = 0;
-    velocity: Vec2;
+    velocity: Vec2 = new Vec2(0, 0);
     linearDrag: number = 2;
     angularDrag: number = 1;
     useDensity: boolean = false;
@@ -26,9 +26,6 @@ export default class BuoyancyController extends Controller {
 
     constructor(world: World) {
         super(world);
-
-        this.normal = new Vec2(0, -1);
-        this.velocity = new Vec2(0, 0);
     }
 
     step(step: TimeStep) {
