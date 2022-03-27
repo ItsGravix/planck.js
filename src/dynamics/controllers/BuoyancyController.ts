@@ -55,6 +55,8 @@ export default class BuoyancyController extends Controller {
                 // TODO: ChainShape submerged area
                 const sarea: number = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
 
+                console.log(sarea);
+
                 area += sarea;
                 areac.x += sarea * sc.x;
                 areac.y += sarea * sc.y;

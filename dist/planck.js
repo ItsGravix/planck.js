@@ -14914,6 +14914,7 @@
                     var sc = new Vec2();
                     // TODO: ChainShape submerged area
                     var sarea = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
+                    console.log(sarea);
                     area += sarea;
                     areac.x += sarea * sc.x;
                     areac.y += sarea * sc.y;
