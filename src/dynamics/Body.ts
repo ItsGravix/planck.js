@@ -37,6 +37,7 @@ import Shape from '../collision/Shape';
 import { JointEdge } from "./Joint";
 import World from "./World";
 import { ContactEdge } from "./Contact";
+import ControllerEdge from "./controllers/ControllerEdge";
 
 const _ASSERT = typeof ASSERT === 'undefined' ? false : ASSERT;
 
@@ -204,6 +205,8 @@ export default class Body {
   /** @internal */ m_sleepTime: number;
   /** @internal */ m_jointList: JointEdge | null;
   /** @internal */ m_contactList: ContactEdge | null;
+  /** @internal */ m_controllerList: ControllerEdge | null;
+  /** @internal */ m_controllerCount: number;
   /** @internal */ m_fixtureList: Fixture | null;
   /** @internal */ m_prev: Body | null;
   /** @internal */ m_next: Body | null;
@@ -279,6 +282,7 @@ export default class Body {
     this.m_next = null;
 
     this.m_destroyed = false;
+    this.m_controllerCount = 0.0;
   }
 
   /** @internal */
