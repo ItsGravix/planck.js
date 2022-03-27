@@ -116,6 +116,8 @@ export default abstract class Shape {
 
   abstract computeDistanceProxy(proxy: DistanceProxy, childIndex: number): void;
 
+  abstract computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number;
+
 }
 
 export type ShapeType = "circle" | "edge" | "polygon" | "chain";

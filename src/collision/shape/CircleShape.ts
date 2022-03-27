@@ -210,4 +210,30 @@ export default class CircleShape extends Shape {
     proxy.m_radius = this.m_radius;
   }
 
+  computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number {
+    const p: Vec2 = Transform.mulVec2(xf, this.m_p);
+    const l: number = -(Vec2.dot(normal, p) - offset);
+
+    if (l < -this.m_radius + Math.EPSILON) {
+      //Completely dry
+      return 0;
+    }
+    if (l > this.m_radius) {
+      //Completely wet
+      c.setVec2(p);
+      return Math.PI * this.m_radius * this.m_radius;
+    }
+
+    //Magic
+    const r2: number = this.m_radius * this.m_radius;
+    const l2: number = l * l;
+    const area: number = r2 * (Math.asin(l / this.m_radius) + Math.PI / 2) + l * Math.sqrt(r2 - l2);
+    const com: number = -2 / 3 * Math.pow(r2 - l2, 1.5) / area;
+
+    c.x = p.x + normal.x * com;
+    c.y = p.y + normal.y * com;
+
+    return area;
+  }
+
 }

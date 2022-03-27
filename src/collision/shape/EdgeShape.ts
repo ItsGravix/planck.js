@@ -300,4 +300,8 @@ export default class EdgeShape extends Shape {
     proxy.m_radius = this.m_radius;
   }
 
+  computeSubmergedArea(normal: Vec2, offset: number, xf: Transform, c: Vec2): number {
+    return 0;
+  }
+
 }
