@@ -14910,12 +14910,10 @@
                 var massc = new Vec2();
                 var area = 0.0;
                 var mass = 0.0;
-                console.log('bruh1');
                 for (var fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
                     var sc = new Vec2();
                     // TODO: ChainShape submerged area
                     var sarea = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
-                    console.log(sarea);
                     area += sarea;
                     areac.x += sarea * sc.x;
                     areac.y += sarea * sc.y;
@@ -14943,13 +14941,14 @@
                 buoyancyForce.mul(this.density * area);
                 body.applyForce(buoyancyForce, massc);
                 //Linear drag
-                var dragForce = body.getLinearVelocityFromWorldPoint(areac).clone();
+                /*const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac);
                 dragForce.sub(this.velocity);
                 dragForce.mul(-this.linearDrag * area);
                 body.applyForce(dragForce, areac);
+
                 //Angular drag
                 //TODO: Something that makes more physical sense?
-                body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);
+                body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);*/
             }
         };
         return BuoyancyController;
