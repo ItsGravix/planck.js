@@ -14910,6 +14910,7 @@
                 var massc = new Vec2();
                 var area = 0.0;
                 var mass = 0.0;
+                console.log('bruh1');
                 for (var fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
                     var sc = new Vec2();
                     // TODO: ChainShape submerged area

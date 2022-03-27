@@ -50,6 +50,8 @@ export default class BuoyancyController extends Controller {
             let area: number = 0.0;
             let mass: number = 0.0;
 
+            console.log('bruh1')
+
             for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
                 const sc: Vec2 = new Vec2();
                 // TODO: ChainShape submerged area
