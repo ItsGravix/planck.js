@@ -50,14 +50,10 @@ export default class BuoyancyController extends Controller {
             let area: number = 0.0;
             let mass: number = 0.0;
 
-            console.log('bruh1')
-
             for (let fixture = body.getFixtureList(); fixture; fixture = fixture.getNext()) {
                 const sc: Vec2 = new Vec2();
                 // TODO: ChainShape submerged area
                 const sarea: number = fixture.getShape().computeSubmergedArea(this.normal, this.offset, body.getTransform(), sc);
-
-                console.log(sarea);
 
                 area += sarea;
                 areac.x += sarea * sc.x;
@@ -92,14 +88,14 @@ export default class BuoyancyController extends Controller {
             body.applyForce(buoyancyForce, massc);
 
             //Linear drag
-            const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac).clone();
+            /*const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac);
             dragForce.sub(this.velocity);
             dragForce.mul(-this.linearDrag * area);
             body.applyForce(dragForce, areac);
 
             //Angular drag
             //TODO: Something that makes more physical sense?
-            body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);
+            body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);*/
         }
     }
 }
