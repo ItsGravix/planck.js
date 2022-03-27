@@ -49,6 +49,9 @@ export { default as Distance } from './collision/Distance';
 export { default as TimeOfImpact } from './collision/TimeOfImpact';
 export { default as DynamicTree } from './collision/DynamicTree';
 
+export { default as Controller } from './dynamics/controllers/Controller';
+export { default as ControllerEdge } from './dynamics/controllers/ControllerEdge';
+
 import Solver, { TimeStep } from './dynamics/Solver';
 import { CollidePolygons } from './collision/shape/CollidePolygon';
 import { default as Settings } from './Settings';

@@ -1,5 +1,5 @@
 /**
- * Planck.js v1.0.0-alpha.2
+ * Planck.js v1.0.0-alpha.3
  * @license The MIT license
  * @copyright Copyright (c) 2021 Erin Catto, Ali Shakiba
  *
@@ -10654,6 +10654,7 @@
             _this.m_limitState = inactiveLimit$1;
             _this.m_axis = Vec2.zero();
             _this.m_perp = Vec2.zero();
+            _this.m_K = new Mat33();
             return _this;
             // Linear constraint (point-to-line)
             // d = p2 - p1 = x2 + r2 - x1 - r1
@@ -14764,6 +14765,25 @@
         manifold.pointCount = pointCount;
     }
 
+    var Controller = /** @class */ (function () {
+        function Controller() {
+            /** @internal */
+            this.m_next = null;
+            /** @internal */
+            this.m_prev = null;
+            /** @internal */
+            this.m_bodyList = null;
+            console.log('hi');
+        }
+        return Controller;
+    }());
+
+    var ControllerEdge = /** @class */ (function () {
+        function ControllerEdge() {
+        }
+        return ControllerEdge;
+    }());
+
     /** @deprecated Merged with main namespace */
     var internal = {};
     // @ts-ignore
@@ -14810,6 +14830,8 @@
     exports.CollidePolygonCircle = CollidePolygonCircle;
     exports.CollidePolygons = CollidePolygons;
     exports.Contact = Contact;
+    exports.Controller = Controller;
+    exports.ControllerEdge = ControllerEdge;
     exports.Distance = Distance;
     exports.DistanceJoint = DistanceJoint;
     exports.DynamicTree = DynamicTree;
