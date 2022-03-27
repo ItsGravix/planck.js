@@ -14947,20 +14947,19 @@
                 if (area < Number.MIN_VALUE) {
                     continue;
                 }
-                console.log('ASD');
+                console.log('test');
                 //Buoyancy
                 var buoyancyForce = this.gravity.neg().clone();
                 buoyancyForce.mul(this.density * area);
                 body.applyForce(buoyancyForce, massc);
                 //Linear drag
-                /*const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac);
+                var dragForce = body.getLinearVelocityFromWorldPoint(areac);
                 dragForce.sub(this.velocity);
                 dragForce.mul(-this.linearDrag * area);
                 body.applyForce(dragForce, areac);
-
                 //Angular drag
                 //TODO: Something that makes more physical sense?
-                body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);*/
+                body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);
             }
         };
         return BuoyancyController;

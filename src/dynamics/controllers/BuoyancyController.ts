@@ -82,7 +82,7 @@ export default class BuoyancyController extends Controller {
                 continue;
             }
 
-            console.log('ASD')
+            console.log('test')
 
             //Buoyancy
             const buoyancyForce: Vec2 = this.gravity.neg().clone();
@@ -90,14 +90,14 @@ export default class BuoyancyController extends Controller {
             body.applyForce(buoyancyForce, massc);
 
             //Linear drag
-            /*const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac);
+            const dragForce: Vec2 = body.getLinearVelocityFromWorldPoint(areac);
             dragForce.sub(this.velocity);
             dragForce.mul(-this.linearDrag * area);
             body.applyForce(dragForce, areac);
 
             //Angular drag
             //TODO: Something that makes more physical sense?
-            body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);*/
+            body.applyTorque(-body.getInertia() / body.getMass() * area * body.getAngularVelocity() * this.angularDrag);
         }
     }
 }
