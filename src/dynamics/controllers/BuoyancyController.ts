@@ -82,8 +82,6 @@ export default class BuoyancyController extends Controller {
                 continue;
             }
 
-            console.log('test2')
-
             //Buoyancy
             const buoyancyForce: Vec2 = this.gravity.clone();
             buoyancyForce.mul(-this.density * area);

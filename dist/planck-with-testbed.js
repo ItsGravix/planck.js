@@ -14941,7 +14941,6 @@
                 if (area < math$1.EPSILON) {
                     continue;
                 }
-                console.log('test2');
                 //Buoyancy
                 var buoyancyForce = this.gravity.clone();
                 buoyancyForce.mul(-this.density * area);
