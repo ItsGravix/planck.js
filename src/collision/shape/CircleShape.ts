@@ -214,9 +214,9 @@ export default class CircleShape extends Shape {
     const p: Vec2 = Transform.mulX(xf, this.m_p);
     const l: number = -(Vec2.dot(normal, p) - offset);
 
-    if (l < -this.m_radius + Number.MIN_VALUE) {
+    if (l < -this.m_radius + Math.EPSILON) {
       //Completely dry
-      return 0;
+      return 0.0;
     }
     if (l > this.m_radius) {
       //Completely wet
@@ -227,8 +227,8 @@ export default class CircleShape extends Shape {
     //Magic
     const r2: number = this.m_radius * this.m_radius;
     const l2: number = l * l;
-    const area: number = r2 * (Math.asin(l / this.m_radius) + Math.PI / 2) + l * Math.sqrt(r2 - l2);
-    const com: number = -2 / 3 * Math.pow(r2 - l2, 1.5) / area;
+    const area: number = r2 * (Math.asin(l / this.m_radius) + Math.PI / 2.0) + l * Math.sqrt(r2 - l2);
+    const com: number = -2.0 / 3.0 * Math.pow(r2 - l2, 1.5) / area;
 
     c.x = p.x + normal.x * com;
     c.y = p.y + normal.y * com;

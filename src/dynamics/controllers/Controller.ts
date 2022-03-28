@@ -11,11 +11,11 @@ const DEBUG_SOLVER = false;
 
 export default class Controller {
     /** @internal */
-    m_next: Controller | null = null;
+    m_next: Controller;
     /** @internal */
-    m_prev: Controller | null = null;
+    m_prev: Controller;
     /** @internal */
-    m_bodyList: ControllerEdge | null = null;
+    m_bodyList: ControllerEdge;
     /** @internal */
     m_bodyCount: number = 0;
     /** @internal */

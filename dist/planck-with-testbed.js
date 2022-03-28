@@ -9310,9 +9310,9 @@
         CircleShape.prototype.computeSubmergedArea = function (normal, offset, xf, c) {
             var p = Transform.mulX(xf, this.m_p);
             var l = -(Vec2.dot(normal, p) - offset);
-            if (l < -this.m_radius + Number.MIN_VALUE) {
+            if (l < -this.m_radius + math$1.EPSILON) {
                 //Completely dry
-                return 0;
+                return 0.0;
             }
             if (l > this.m_radius) {
                 //Completely wet
@@ -9322,8 +9322,8 @@
             //Magic
             var r2 = this.m_radius * this.m_radius;
             var l2 = l * l;
-            var area = r2 * (math$1.asin(l / this.m_radius) + math$1.PI / 2) + l * math$1.sqrt(r2 - l2);
-            var com = -2 / 3 * math$1.pow(r2 - l2, 1.5) / area;
+            var area = r2 * (math$1.asin(l / this.m_radius) + math$1.PI / 2.0) + l * math$1.sqrt(r2 - l2);
+            var com = -2.0 / 3.0 * math$1.pow(r2 - l2, 1.5) / area;
             c.x = p.x + normal.x * com;
             c.y = p.y + normal.y * com;
             return area;
@@ -14819,12 +14819,6 @@
         // TODO: Add createController to world
         function Controller(world) {
             /** @internal */
-            this.m_next = null;
-            /** @internal */
-            this.m_prev = null;
-            /** @internal */
-            this.m_bodyList = null;
-            /** @internal */
             this.m_bodyCount = 0;
             this.m_world = world;
         }
@@ -14931,10 +14925,10 @@
                     var shapeDensity = void 0;
                     if (this.useDensity) {
                         //TODO: Figure out what to do now density is gone
-                        shapeDensity = 1;
+                        shapeDensity = 1.0;
                     }
                     else {
-                        shapeDensity = 1;
+                        shapeDensity = 1.0;
                     }
                     mass += sarea * shapeDensity;
                     massc.x += sarea * sc.x * shapeDensity;
@@ -14944,13 +14938,13 @@
                 areac.y /= area;
                 massc.x /= mass;
                 massc.y /= mass;
-                if (area < Number.MIN_VALUE) {
+                if (area < math$1.EPSILON) {
                     continue;
                 }
-                console.log('test');
+                console.log('test2');
                 //Buoyancy
-                var buoyancyForce = this.gravity.neg().clone();
-                buoyancyForce.mul(this.density * area);
+                var buoyancyForce = this.gravity.clone();
+                buoyancyForce.mul(-this.density * area);
                 body.applyForce(buoyancyForce, massc);
                 //Linear drag
                 var dragForce = body.getLinearVelocityFromWorldPoint(areac);

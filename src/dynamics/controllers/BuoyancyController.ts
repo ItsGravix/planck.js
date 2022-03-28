@@ -63,9 +63,9 @@ export default class BuoyancyController extends Controller {
 
                 if (this.useDensity) {
                     //TODO: Figure out what to do now density is gone
-                    shapeDensity = 1;
+                    shapeDensity = 1.0;
                 } else {
-                    shapeDensity = 1;
+                    shapeDensity = 1.0;
                 }
 
                 mass += sarea * shapeDensity;
@@ -78,15 +78,15 @@ export default class BuoyancyController extends Controller {
             massc.x /= mass;
             massc.y /= mass;
 
-            if (area < Number.MIN_VALUE) {
+            if (area < Math.EPSILON) {
                 continue;
             }
 
-            console.log('test')
+            console.log('test2')
 
             //Buoyancy
-            const buoyancyForce: Vec2 = this.gravity.neg().clone();
-            buoyancyForce.mul(this.density * area);
+            const buoyancyForce: Vec2 = this.gravity.clone();
+            buoyancyForce.mul(-this.density * area);
             body.applyForce(buoyancyForce, massc);
 
             //Linear drag
