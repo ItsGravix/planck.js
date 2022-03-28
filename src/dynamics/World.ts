@@ -33,6 +33,9 @@ import Contact from './Contact';
 import AABB, { RayCastInput, RayCastOutput } from "../collision/AABB";
 import Fixture, { FixtureProxy } from "./Fixture";
 import Manifold from "../collision/Manifold";
+import Shape from "../collision/Shape";
+import Transform from "../common/Transform";
+import Distance, {testOverlap} from "../collision/Distance";
 
 
 const _ASSERT = typeof ASSERT === 'undefined' ? false : ASSERT;
@@ -381,6 +384,26 @@ export default class World {
     this.m_broadPhase.query(aabb, function(proxyId: number): boolean { // TODO GC
       const proxy = broadPhase.getUserData(proxyId);
       return callback(proxy.fixture);
+    });
+  }
+
+  queryShape(shape: Shape, transform: Transform, callback: WorldAABBQueryCallback): void {
+    if (transform == null) {
+      transform = new Transform();
+      transform.setIdentity();
+    }
+
+    const aabb: AABB = new AABB();
+    shape.computeAABB(aabb, transform, 0) // TODO: child index
+
+    const broadPhase = this.m_broadPhase;
+    this.m_broadPhase.query(aabb, function(proxyId: number): boolean { // TODO GC
+      const proxy = broadPhase.getUserData(proxyId);
+
+      if (testOverlap(shape, 0, proxy.fixture.getShape(), 0, transform, proxy.fixture.getBody().getTransform())) {
+        return callback(proxy.fixture);
+      }
+      return true;
     });
   }
 

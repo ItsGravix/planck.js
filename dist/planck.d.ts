@@ -1365,6 +1365,7 @@ declare class World {
      * @param callback Called for each fixture found in the query AABB. It may return `false` to terminate the query.
      */
     queryAABB(aabb: AABB, callback: WorldAABBQueryCallback): void;
+    queryShape(shape: Shape, transform: Transform, callback: WorldAABBQueryCallback): void;
     /**
      * Ray-cast the world for all fixtures in the path of the ray. Your callback
      * controls whether you get the closest point, any point, or n-points. The

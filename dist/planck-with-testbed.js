@@ -7442,6 +7442,22 @@
                 return callback(proxy.fixture);
             });
         };
+        World.prototype.queryShape = function (shape, transform, callback) {
+            if (transform == null) {
+                transform = new Transform();
+                transform.setIdentity();
+            }
+            var aabb = new AABB();
+            shape.computeAABB(aabb, transform, 0); // TODO: child index
+            var broadPhase = this.m_broadPhase;
+            this.m_broadPhase.query(aabb, function (proxyId) {
+                var proxy = broadPhase.getUserData(proxyId);
+                if (testOverlap(shape, 0, proxy.fixture.getShape(), 0, transform, proxy.fixture.getBody().getTransform())) {
+                    return callback(proxy.fixture);
+                }
+                return true;
+            });
+        };
         /**
          * Ray-cast the world for all fixtures in the path of the ray. Your callback
          * controls whether you get the closest point, any point, or n-points. The
