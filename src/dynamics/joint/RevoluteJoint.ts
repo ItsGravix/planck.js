@@ -428,11 +428,11 @@ export default class RevoluteJoint extends Joint {
     this.m_invIA = this.m_bodyA.m_invI;
     this.m_invIB = this.m_bodyB.m_invI;
 
-    const aA = this.m_bodyA.c_position.a;
+    const aA = this.m_bodyA.m_sweep.a;
     const vA = this.m_bodyA.c_velocity.v;
     let wA = this.m_bodyA.c_velocity.w;
 
-    const aB = this.m_bodyB.c_position.a;
+    const aB = this.m_bodyB.m_sweep.a;
     const vB = this.m_bodyB.c_velocity.v;
     let wB = this.m_bodyB.c_velocity.w;
 

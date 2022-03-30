@@ -10388,10 +10388,10 @@
             this.m_invMassB = this.m_bodyB.m_invMass;
             this.m_invIA = this.m_bodyA.m_invI;
             this.m_invIB = this.m_bodyB.m_invI;
-            var aA = this.m_bodyA.c_position.a;
+            var aA = this.m_bodyA.m_sweep.a;
             var vA = this.m_bodyA.c_velocity.v;
             var wA = this.m_bodyA.c_velocity.w;
-            var aB = this.m_bodyB.c_position.a;
+            var aB = this.m_bodyB.m_sweep.a;
             var vB = this.m_bodyB.c_velocity.v;
             var wB = this.m_bodyB.c_velocity.w;
             var qA = Rot.neo(aA);
