@@ -726,7 +726,6 @@ export default class RevoluteJoint extends Joint {
       const allowedStretch = 10.0 * Settings.linearSlop;
 
       if (cLengthSquared > allowedStretch * allowedStretch) {
-        console.log('bad stretch')
         const uX = CX / cLength;
         const uY = CY / cLength;
         const k = invMass1 + invMass2;
@@ -747,12 +746,12 @@ export default class RevoluteJoint extends Joint {
       }
 
       const K = new Mat22();
-      K.ex.x = invMass1 + invMass2 + invI1 * r1Y * r1Y + invI2 * r2Y * r2Y;
-      K.ex.y = -invI1 * r1X * r1Y - invI2 * r2X * r2X;
+      K.ex.x = invMass1 + invMass2 + invI1 * r1.y * r1.y + invI2 * r2.y * r2.y;
+      K.ex.y = -invI1 * r1.x * r1.y - invI2 * r2.x * r2.y;
       K.ey.x = K.ex.y;
-      K.ey.y = invMass1 + invMass2 + invI1 * r1X * r1X + invI2 * r2X * r2X;
+      K.ey.y = invMass1 + invMass2 + invI1 * r1.x * r1.x + invI2 * r2.x * r2.x;
 
-      const impulse = Vec2.neg(K.solve(C)); // Vec2
+      const impulse = K.solve(Vec2.neg(C)); // Vec2
 
       aSweepC.subMul(invMass1, impulse);
       aSweepA -= invI1 * Vec2.crossVec2Vec2(r1, impulse);
@@ -765,6 +764,9 @@ export default class RevoluteJoint extends Joint {
     this.m_bodyA.c_position.a = aSweepA;
     this.m_bodyB.c_position.c.setVec2(bSweepC);
     this.m_bodyB.c_position.a = bSweepA;
+
+    this.m_bodyA.synchronizeTransform();
+    this.m_bodyB.synchronizeTransform();
 
     return positionError <= Settings.linearSlop
         && angularError <= Settings.angularSlop;

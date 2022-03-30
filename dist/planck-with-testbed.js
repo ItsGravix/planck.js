@@ -10661,7 +10661,6 @@
                 // Handle large detachment.
                 var allowedStretch = 10.0 * Settings.linearSlop;
                 if (cLengthSquared > allowedStretch * allowedStretch) {
-                    console.log('bad stretch');
                     var k = invMass1 + invMass2;
                     var m = 1.0 / k;
                     var impulseX = m * (-CX);
@@ -10676,11 +10675,11 @@
                     C = new Vec2(CX, CY);
                 }
                 var K = new Mat22();
-                K.ex.x = invMass1 + invMass2 + invI1 * r1Y * r1Y + invI2 * r2Y * r2Y;
-                K.ex.y = -invI1 * r1X * r1Y - invI2 * r2X * r2X;
+                K.ex.x = invMass1 + invMass2 + invI1 * r1.y * r1.y + invI2 * r2.y * r2.y;
+                K.ex.y = -invI1 * r1.x * r1.y - invI2 * r2.x * r2.y;
                 K.ey.x = K.ex.y;
-                K.ey.y = invMass1 + invMass2 + invI1 * r1X * r1X + invI2 * r2X * r2X;
-                var impulse = Vec2.neg(K.solve(C)); // Vec2
+                K.ey.y = invMass1 + invMass2 + invI1 * r1.x * r1.x + invI2 * r2.x * r2.x;
+                var impulse = K.solve(Vec2.neg(C)); // Vec2
                 aSweepC.subMul(invMass1, impulse);
                 aSweepA -= invI1 * Vec2.crossVec2Vec2(r1, impulse);
                 bSweepC.addMul(invMass2, impulse);
@@ -10690,6 +10689,8 @@
             this.m_bodyA.c_position.a = aSweepA;
             this.m_bodyB.c_position.c.setVec2(bSweepC);
             this.m_bodyB.c_position.a = bSweepA;
+            this.m_bodyA.synchronizeTransform();
+            this.m_bodyB.synchronizeTransform();
             return positionError <= Settings.linearSlop
                 && angularError <= Settings.angularSlop;
         };
