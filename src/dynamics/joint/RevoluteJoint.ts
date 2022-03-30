@@ -428,11 +428,11 @@ export default class RevoluteJoint extends Joint {
     this.m_invIA = this.m_bodyA.m_invI;
     this.m_invIB = this.m_bodyB.m_invI;
 
-    const aA = this.m_bodyA.m_sweep.a;
+    const aA = this.m_bodyA.c_position.a;
     const vA = this.m_bodyA.c_velocity.v;
     let wA = this.m_bodyA.c_velocity.w;
 
-    const aB = this.m_bodyB.m_sweep.a;
+    const aB = this.m_bodyB.c_position.a;
     const vB = this.m_bodyB.c_velocity.v;
     let wB = this.m_bodyB.c_velocity.w;
 
@@ -643,10 +643,10 @@ export default class RevoluteJoint extends Joint {
    * This returns true if the position errors are within tolerance.
    */
   solvePositionConstraints(step: TimeStep): boolean {
-    const cA = this.m_bodyA.m_sweep.c;
-    let aA = this.m_bodyA.m_sweep.a;
-    const cB = this.m_bodyB.m_sweep.c;
-    let aB = this.m_bodyB.m_sweep.a;
+    const cA = this.m_bodyA.c_position.c;
+    let aA = this.m_bodyA.c_position.a;
+    const cB = this.m_bodyB.c_position.c;
+    let aB = this.m_bodyB.c_position.a;
 
     const qA = Rot.neo(aA);
     const qB = Rot.neo(aB);
@@ -724,10 +724,10 @@ export default class RevoluteJoint extends Joint {
       aB += iB * Vec2.crossVec2Vec2(rB, impulse);
     }
 
-    this.m_bodyA.m_sweep.c.setVec2(cA);
-    this.m_bodyA.m_sweep.a = aA;
-    this.m_bodyB.m_sweep.c.setVec2(cB);
-    this.m_bodyB.m_sweep.a = aB;
+    this.m_bodyA.c_position.c.setVec2(cA);
+    this.m_bodyA.c_position.a = aA;
+    this.m_bodyB.c_position.c.setVec2(cB);
+    this.m_bodyB.c_position.a = aB;
 
     return positionError <= Settings.linearSlop
         && angularError <= Settings.angularSlop;

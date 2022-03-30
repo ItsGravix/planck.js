@@ -10388,10 +10388,10 @@
             this.m_invMassB = this.m_bodyB.m_invMass;
             this.m_invIA = this.m_bodyA.m_invI;
             this.m_invIB = this.m_bodyB.m_invI;
-            var aA = this.m_bodyA.m_sweep.a;
+            var aA = this.m_bodyA.c_position.a;
             var vA = this.m_bodyA.c_velocity.v;
             var wA = this.m_bodyA.c_velocity.w;
-            var aB = this.m_bodyB.m_sweep.a;
+            var aB = this.m_bodyB.c_position.a;
             var vB = this.m_bodyB.c_velocity.v;
             var wB = this.m_bodyB.c_velocity.w;
             var qA = Rot.neo(aA);
@@ -10567,10 +10567,10 @@
          * This returns true if the position errors are within tolerance.
          */
         RevoluteJoint.prototype.solvePositionConstraints = function (step) {
-            var cA = this.m_bodyA.m_sweep.c;
-            var aA = this.m_bodyA.m_sweep.a;
-            var cB = this.m_bodyB.m_sweep.c;
-            var aB = this.m_bodyB.m_sweep.a;
+            var cA = this.m_bodyA.c_position.c;
+            var aA = this.m_bodyA.c_position.a;
+            var cB = this.m_bodyB.c_position.c;
+            var aB = this.m_bodyB.c_position.a;
             var qA = Rot.neo(aA);
             var qB = Rot.neo(aB);
             var angularError = 0.0; // float
@@ -10629,10 +10629,10 @@
                 cB.addMul(mB, impulse);
                 aB += iB * Vec2.crossVec2Vec2(rB, impulse);
             }
-            this.m_bodyA.m_sweep.c.setVec2(cA);
-            this.m_bodyA.m_sweep.a = aA;
-            this.m_bodyB.m_sweep.c.setVec2(cB);
-            this.m_bodyB.m_sweep.a = aB;
+            this.m_bodyA.c_position.c.setVec2(cA);
+            this.m_bodyA.c_position.a = aA;
+            this.m_bodyB.c_position.c.setVec2(cB);
+            this.m_bodyB.c_position.a = aB;
             return positionError <= Settings.linearSlop
                 && angularError <= Settings.angularSlop;
         };
