@@ -481,7 +481,7 @@ export default class Solver {
         }
       }
 
-      if (minSleepTime >= Settings.timeToSleep && positionSolved) {
+      if (minSleepTime >= Settings.timeToSleep) {
         for (let i = 0; i < this.m_bodies.length; ++i) {
           const body = this.m_bodies[i];
           body.setAwake(false);

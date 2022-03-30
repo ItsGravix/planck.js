@@ -6745,8 +6745,6 @@
                 body.c_velocity.v.setVec2(v);
                 body.c_velocity.w = w;
             }
-            // Solve position constraints
-            var positionSolved = false;
             for (var i = 0; i < step.positionIterations; ++i) {
                 var minSeparation = 0.0;
                 for (var j = 0; j < this.m_contacts.length; ++j) {
@@ -6764,8 +6762,6 @@
                     jointsOkay = jointsOkay && jointOkay;
                 }
                 if (contactsOkay && jointsOkay) {
-                    // Exit early if the position errors are small.
-                    positionSolved = true;
                     break;
                 }
             }
@@ -6799,7 +6795,7 @@
                         minSleepTime = math.min(minSleepTime, body.m_sleepTime);
                     }
                 }
-                if (minSleepTime >= Settings.timeToSleep && positionSolved) {
+                if (minSleepTime >= Settings.timeToSleep) {
                     for (var i = 0; i < this.m_bodies.length; ++i) {
                         var body = this.m_bodies[i];
                         body.setAwake(false);
