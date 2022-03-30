@@ -6756,7 +6756,7 @@
                 }
                 // We can't expect minSpeparation >= -Settings.linearSlop because we don't
                 // push the separation above -Settings.linearSlop.
-                var contactsOkay = minSeparation >= -3.0 * Settings.linearSlop;
+                var contactsOkay = minSeparation >= -1.5 * Settings.linearSlop;
                 var jointsOkay = true;
                 for (var j = 0; j < this.m_joints.length; ++j) {
                     var joint = this.m_joints[j];

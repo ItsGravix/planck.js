@@ -427,7 +427,7 @@ export default class Solver {
       }
       // We can't expect minSpeparation >= -Settings.linearSlop because we don't
       // push the separation above -Settings.linearSlop.
-      const contactsOkay = minSeparation >= -3.0 * Settings.linearSlop;
+      const contactsOkay = minSeparation >= -1.5 * Settings.linearSlop;
 
       let jointsOkay = true;
       for (let j = 0; j < this.m_joints.length; ++j) {
