@@ -10652,9 +10652,8 @@
                 var cLengthSquared = CX * CX + CY * CY;
                 var cLength = math.sqrt(cLengthSquared);
                 positionError = cLength;
-                /*C.addCombine(1, bSweepC, 1, r2);
+                C.addCombine(1, bSweepC, 1, r2);
                 C.subCombine(1, aSweepC, 1, r1);
-                positionError = C.length();*/
                 var mA = this.m_invMassA;
                 var mB = this.m_invMassB; // float
                 var iA = this.m_invIA;
