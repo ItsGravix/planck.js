@@ -10654,20 +10654,36 @@
                 positionError = cLength;
                 C.addCombine(1, bSweepC, 1, r2);
                 C.subCombine(1, aSweepC, 1, r1);
-                var mA = this.m_invMassA;
-                var mB = this.m_invMassB; // float
-                var iA = this.m_invIA;
-                var iB = this.m_invIB; // float
+                var invMass1 = this.m_invMassA;
+                var invMass2 = this.m_invMassB; // float
+                var invI1 = this.m_invIA;
+                var invI2 = this.m_invIB; // float
+                // Handle large detachment.
+                var allowedStretch = 10.0 * Settings.linearSlop;
+                if (cLengthSquared > allowedStretch * allowedStretch) {
+                    var k = invMass1 + invMass2;
+                    var m = 1.0 / k;
+                    var impulseX = m * (-CX);
+                    var impulseY = m * (-CY);
+                    var k_beta = 0.5;
+                    this.m_bodyA.c_position.c.x -= k_beta * invMass1 * impulseX;
+                    this.m_bodyA.c_position.c.y -= k_beta * invMass1 * impulseY;
+                    this.m_bodyB.c_position.c.x += k_beta * invMass2 * impulseX;
+                    this.m_bodyB.c_position.c.y += k_beta * invMass2 * impulseY;
+                    CX = this.m_bodyB.c_position.c.x + r2X - this.m_bodyA.c_position.c.x - r1X;
+                    CY = this.m_bodyB.c_position.c.y + r2Y - this.m_bodyA.c_position.c.y - r1Y;
+                    C = new Vec2(CX, CY);
+                }
                 var K = new Mat22();
-                K.ex.x = mA + mB + iA * r1.y * r1.y + iB * r2.y * r2.y;
-                K.ex.y = -iA * r1.x * r1.y - iB * r2.x * r2.y;
+                K.ex.x = invMass1 + invMass2 + invI1 * r1.y * r1.y + invI2 * r2.y * r2.y;
+                K.ex.y = -invI1 * r1.x * r1.y - invI2 * r2.x * r2.y;
                 K.ey.x = K.ex.y;
-                K.ey.y = mA + mB + iA * r1.x * r1.x + iB * r2.x * r2.x;
+                K.ey.y = invMass1 + invMass2 + invI1 * r1.x * r1.x + invI2 * r2.x * r2.x;
                 var impulse = Vec2.neg(K.solve(C)); // Vec2
-                aSweepC.subMul(mA, impulse);
-                aSweepA -= iA * Vec2.crossVec2Vec2(r1, impulse);
-                bSweepC.addMul(mB, impulse);
-                bSweepA += iB * Vec2.crossVec2Vec2(r2, impulse);
+                aSweepC.subMul(invMass1, impulse);
+                aSweepA -= invI1 * Vec2.crossVec2Vec2(r1, impulse);
+                bSweepC.addMul(invMass2, impulse);
+                bSweepA += invI2 * Vec2.crossVec2Vec2(r2, impulse);
             }
             this.m_bodyA.c_position.c.setVec2(aSweepC);
             this.m_bodyA.c_position.a = aSweepA;

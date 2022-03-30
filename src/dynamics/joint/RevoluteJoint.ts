@@ -706,10 +706,10 @@ export default class RevoluteJoint extends Joint {
       const r2Y = r2.y;
       const r2X = r2.x;
 
-      const C = Vec2.zero();
+      let C = Vec2.zero();
 
-      const CX = bSweepC.x + r2X - aSweepC.x - r1X;
-      const CY = bSweepC.y + r2Y - aSweepC.y - r1Y;
+      let CX = bSweepC.x + r2X - aSweepC.x - r1X;
+      let CY = bSweepC.y + r2Y - aSweepC.y - r1Y;
       const cLengthSquared = CX * CX + CY * CY;
       const cLength = Math.sqrt(cLengthSquared);
       positionError = cLength;
@@ -717,31 +717,47 @@ export default class RevoluteJoint extends Joint {
       C.addCombine(1, bSweepC, 1, r2);
       C.subCombine(1, aSweepC, 1, r1);
 
-      const mA = this.m_invMassA;
-      const mB = this.m_invMassB; // float
-      const iA = this.m_invIA;
-      const iB = this.m_invIB; // float
+      const invMass1 = this.m_invMassA;
+      const invMass2 = this.m_invMassB; // float
+      const invI1 = this.m_invIA;
+      const invI2 = this.m_invIB; // float
 
       // Handle large detachment.
       const allowedStretch = 10.0 * Settings.linearSlop;
 
       if (cLengthSquared > allowedStretch * allowedStretch) {
+        const uX = CX / cLength;
+        const uY = CY / cLength;
+        const k = invMass1 + invMass2;
+        const m = 1.0 / k;
+        const impulseX = m * (-CX);
+        const impulseY = m * (-CY);
+        const k_beta = 0.5;
 
+        this.m_bodyA.c_position.c.x -= k_beta * invMass1 * impulseX;
+        this.m_bodyA.c_position.c.y -= k_beta * invMass1 * impulseY;
+        this.m_bodyB.c_position.c.x += k_beta * invMass2 * impulseX;
+        this.m_bodyB.c_position.c.y += k_beta * invMass2 * impulseY;
+
+        CX = this.m_bodyB.c_position.c.x + r2X - this.m_bodyA.c_position.c.x - r1X;
+        CY = this.m_bodyB.c_position.c.y + r2Y - this.m_bodyA.c_position.c.y - r1Y;
+
+        C = new Vec2(CX, CY);
       }
 
       const K = new Mat22();
-      K.ex.x = mA + mB + iA * r1.y * r1.y + iB * r2.y * r2.y;
-      K.ex.y = -iA * r1.x * r1.y - iB * r2.x * r2.y;
+      K.ex.x = invMass1 + invMass2 + invI1 * r1.y * r1.y + invI2 * r2.y * r2.y;
+      K.ex.y = -invI1 * r1.x * r1.y - invI2 * r2.x * r2.y;
       K.ey.x = K.ex.y;
-      K.ey.y = mA + mB + iA * r1.x * r1.x + iB * r2.x * r2.x;
+      K.ey.y = invMass1 + invMass2 + invI1 * r1.x * r1.x + invI2 * r2.x * r2.x;
 
       const impulse = Vec2.neg(K.solve(C)); // Vec2
 
-      aSweepC.subMul(mA, impulse);
-      aSweepA -= iA * Vec2.crossVec2Vec2(r1, impulse);
+      aSweepC.subMul(invMass1, impulse);
+      aSweepA -= invI1 * Vec2.crossVec2Vec2(r1, impulse);
 
-      bSweepC.addMul(mB, impulse);
-      bSweepA += iB * Vec2.crossVec2Vec2(r2, impulse);
+      bSweepC.addMul(invMass2, impulse);
+      bSweepA += invI2 * Vec2.crossVec2Vec2(r2, impulse);
     }
 
     this.m_bodyA.c_position.c.setVec2(aSweepC);
