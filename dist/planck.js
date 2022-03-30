@@ -10663,7 +10663,6 @@
                 // Handle large detachment.
                 var allowedStretch = 10.0 * Settings.linearSlop;
                 if (cLengthSquared > allowedStretch * allowedStretch) {
-                    console.log('bad stretch1');
                     var k = invMass1 + invMass2;
                     var m = 1.0 / k;
                     var impulseX = m * (-CX);

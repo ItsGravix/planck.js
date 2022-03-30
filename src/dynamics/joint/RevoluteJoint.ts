@@ -729,7 +729,7 @@ export default class RevoluteJoint extends Joint {
       const allowedStretch = 10.0 * Settings.linearSlop;
 
       if (cLengthSquared > allowedStretch * allowedStretch) {
-        console.log('bad stretch1')
+        //console.log('bad stretch1')
         const uX = CX / cLength;
         const uY = CY / cLength;
         const k = invMass1 + invMass2;
