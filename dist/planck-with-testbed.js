@@ -10487,7 +10487,7 @@
             if (this.m_enableMotor && this.m_limitState != equalLimits$1
                 && fixedRotation == false) {
                 var Cdot = wB - wA - this.m_motorSpeed; // float
-                var impulse = -this.m_motorMass * Cdot; // float
+                var impulse = this.m_motorMass * (-Cdot); // float
                 var oldImpulse = this.m_motorImpulse; // float
                 var maxImpulse = step.dt * this.m_maxMotorTorque; // float
                 this.m_motorImpulse = math$1.clamp(this.m_motorImpulse + impulse, -maxImpulse, maxImpulse);
@@ -10567,10 +10567,10 @@
          * This returns true if the position errors are within tolerance.
          */
         RevoluteJoint.prototype.solvePositionConstraints = function (step) {
-            var cA = this.m_bodyA.c_position.c;
-            var aA = this.m_bodyA.c_position.a;
-            var cB = this.m_bodyB.c_position.c;
-            var aB = this.m_bodyB.c_position.a;
+            var cA = this.m_bodyA.m_sweep.c;
+            var aA = this.m_bodyA.m_sweep.a;
+            var cB = this.m_bodyB.m_sweep.c;
+            var aB = this.m_bodyB.m_sweep.a;
             var qA = Rot.neo(aA);
             var qB = Rot.neo(aB);
             var angularError = 0.0; // float
@@ -10629,10 +10629,10 @@
                 cB.addMul(mB, impulse);
                 aB += iB * Vec2.crossVec2Vec2(rB, impulse);
             }
-            this.m_bodyA.c_position.c.setVec2(cA);
-            this.m_bodyA.c_position.a = aA;
-            this.m_bodyB.c_position.c.setVec2(cB);
-            this.m_bodyB.c_position.a = aB;
+            this.m_bodyA.m_sweep.c.setVec2(cA);
+            this.m_bodyA.m_sweep.a = aA;
+            this.m_bodyB.m_sweep.c.setVec2(cB);
+            this.m_bodyB.m_sweep.a = aB;
             return positionError <= Settings.linearSlop
                 && angularError <= Settings.angularSlop;
         };
