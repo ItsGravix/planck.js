@@ -10635,6 +10635,8 @@
                 }
                 aSweepA -= this.m_invIA * limitImpulse;
                 bSweepA += this.m_invIB * limitImpulse;
+                this.m_bodyA.synchronizeTransform();
+                this.m_bodyB.synchronizeTransform();
             }
             // Solve point-to-point constraint.
             {
@@ -10661,17 +10663,18 @@
                 // Handle large detachment.
                 var allowedStretch = 10.0 * Settings.linearSlop;
                 if (cLengthSquared > allowedStretch * allowedStretch) {
+                    console.log('bad stretch1');
                     var k = invMass1 + invMass2;
                     var m = 1.0 / k;
                     var impulseX = m * (-CX);
                     var impulseY = m * (-CY);
                     var k_beta = 0.5;
-                    this.m_bodyA.c_position.c.x -= k_beta * invMass1 * impulseX;
-                    this.m_bodyA.c_position.c.y -= k_beta * invMass1 * impulseY;
-                    this.m_bodyB.c_position.c.x += k_beta * invMass2 * impulseX;
-                    this.m_bodyB.c_position.c.y += k_beta * invMass2 * impulseY;
-                    CX = this.m_bodyB.c_position.c.x + r2X - this.m_bodyA.c_position.c.x - r1X;
-                    CY = this.m_bodyB.c_position.c.y + r2Y - this.m_bodyA.c_position.c.y - r1Y;
+                    aSweepC.x -= k_beta * invMass1 * impulseX;
+                    aSweepC.y -= k_beta * invMass1 * impulseY;
+                    bSweepC.x += k_beta * invMass2 * impulseX;
+                    bSweepC.y += k_beta * invMass2 * impulseY;
+                    CX = bSweepC.x + r2X - aSweepC.x - r1X;
+                    CY = bSweepC.y + r2Y - aSweepC.y - r1Y;
                     C = new Vec2(CX, CY);
                 }
                 var K = new Mat22();
