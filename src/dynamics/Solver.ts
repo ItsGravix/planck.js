@@ -481,7 +481,7 @@ export default class Solver {
         }
       }
 
-      if (minSleepTime >= Settings.timeToSleep) {
+      if (minSleepTime >= Settings.timeToSleep && positionSolved) {
         for (let i = 0; i < this.m_bodies.length; ++i) {
           const body = this.m_bodies[i];
           body.setAwake(false);
@@ -807,7 +807,16 @@ export default class Solver {
       // We can't expect minSpeparation >= -Settings.linearSlop because we don't
       // push the separation above -Settings.linearSlop.
       const contactsOkay = minSeparation >= -1.5 * Settings.linearSlop;
-      if (contactsOkay) {
+
+      // Solve joints
+      let jointsOkay = true;
+      for (let j = 0; j < this.m_joints.length; ++j) {
+        const joint = this.m_joints[j];
+        const jointOkay = joint.solvePositionConstraints(subStep);
+        jointsOkay = jointsOkay && jointOkay;
+      }
+
+      if (contactsOkay && jointsOkay) {
         break;
       }
     }
@@ -906,6 +915,33 @@ export default class Solver {
       body.m_angularVelocity = w;
       body.synchronizeTransform();
     }
+
+    /*const k_toiBaumgarte = 0.75;
+
+    for (let i = 0; i < subStep.positionIterations; ++i) {
+      let minSeparation = 0.0;
+      for (let j = 0; j < this.m_contacts.length; ++j) {
+        const contact = this.m_contacts[j];
+        const separation = contact.solvePositionConstraint(subStep);
+        minSeparation = Math.min(minSeparation, separation);
+      }
+      // We can't expect minSpeparation >= -Settings.linearSlop because we don't
+      // push the separation above -Settings.linearSlop.
+      const contactsOkay = minSeparation >= -3.0 * Settings.linearSlop;
+
+      let jointsOkay = true;
+      for (let j = 0; j < this.m_joints.length; ++j) {
+        const joint = this.m_joints[j];
+        const jointOkay = joint.solvePositionConstraints(subStep);
+        jointsOkay = jointsOkay && jointOkay;
+      }
+
+      if (contactsOkay && jointsOkay) {
+        // Exit early if the position errors are small.
+        positionSolved = true;
+        break;
+      }
+    }*/
 
     this.postSolveIsland();
   }
