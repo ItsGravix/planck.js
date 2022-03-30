@@ -10600,19 +10600,18 @@
          * This returns true if the position errors are within tolerance.
          */
         RevoluteJoint.prototype.solvePositionConstraints = function (step) {
-            var cA = this.m_bodyA.c_position.c;
-            var aA = this.m_bodyA.c_position.a;
-            var cB = this.m_bodyB.c_position.c;
-            var aB = this.m_bodyB.c_position.a;
-            var qA = Rot.neo(aA);
-            var qB = Rot.neo(aB);
+            var aSweepC = this.m_bodyA.c_position.c;
+            var aSweepA = this.m_bodyA.c_position.a;
+            var bSweepC = this.m_bodyB.c_position.c;
+            var bSweepA = this.m_bodyB.c_position.a;
+            var qA = Rot.neo(aSweepA);
+            var qB = Rot.neo(bSweepA);
             var angularError = 0.0; // float
             var positionError = 0.0; // float
-            var fixedRotation = (this.m_invIA + this.m_invIB == 0.0); // bool
+            (this.m_invIA + this.m_invIB == 0.0); // bool
             // Solve angular limit constraint.
-            if (this.m_enableLimit && this.m_limitState != inactiveLimit$2
-                && fixedRotation == false) {
-                var angle = aB - aA - this.m_referenceAngle; // float
+            if (this.m_enableLimit && this.m_limitState != inactiveLimit$2) {
+                var angle = bSweepA - aSweepA - this.m_referenceAngle; // float
                 var limitImpulse = 0.0; // float
                 if (this.m_limitState == equalLimits$1) {
                     // Prevent large angular corrections
@@ -10634,38 +10633,47 @@
                     C = math$1.clamp(C - Settings.angularSlop, 0.0, Settings.maxAngularCorrection);
                     limitImpulse = -this.m_motorMass * C;
                 }
-                aA -= this.m_invIA * limitImpulse;
-                aB += this.m_invIB * limitImpulse;
+                aSweepA -= this.m_invIA * limitImpulse;
+                bSweepA += this.m_invIB * limitImpulse;
             }
             // Solve point-to-point constraint.
             {
-                qA.setAngle(aA);
-                qB.setAngle(aB);
-                var rA = Rot.mulVec2(qA, Vec2.sub(this.m_localAnchorA, this.m_localCenterA)); // Vec2
-                var rB = Rot.mulVec2(qB, Vec2.sub(this.m_localAnchorB, this.m_localCenterB)); // Vec2
+                qA.setAngle(aSweepA);
+                qB.setAngle(bSweepA);
+                var r1 = Rot.mulVec2(qA, Vec2.sub(this.m_localAnchorA, this.m_localCenterA)); // Vec2
+                var r1Y = r1.y;
+                var r1X = r1.x;
+                var r2 = Rot.mulVec2(qB, Vec2.sub(this.m_localAnchorB, this.m_localCenterB)); // Vec2
+                var r2Y = r2.y;
+                var r2X = r2.x;
                 var C = Vec2.zero();
-                C.addCombine(1, cB, 1, rB);
-                C.subCombine(1, cA, 1, rA);
-                positionError = C.length();
+                var CX = bSweepC.x + r2X - aSweepC.x - r1X;
+                var CY = bSweepC.y + r2Y - aSweepC.y - r1Y;
+                var cLengthSquared = CX * CX + CY * CY;
+                var cLength = math$1.sqrt(cLengthSquared);
+                positionError = cLength;
+                /*C.addCombine(1, bSweepC, 1, r2);
+                C.subCombine(1, aSweepC, 1, r1);
+                positionError = C.length();*/
                 var mA = this.m_invMassA;
                 var mB = this.m_invMassB; // float
                 var iA = this.m_invIA;
                 var iB = this.m_invIB; // float
                 var K = new Mat22();
-                K.ex.x = mA + mB + iA * rA.y * rA.y + iB * rB.y * rB.y;
-                K.ex.y = -iA * rA.x * rA.y - iB * rB.x * rB.y;
+                K.ex.x = mA + mB + iA * r1.y * r1.y + iB * r2.y * r2.y;
+                K.ex.y = -iA * r1.x * r1.y - iB * r2.x * r2.y;
                 K.ey.x = K.ex.y;
-                K.ey.y = mA + mB + iA * rA.x * rA.x + iB * rB.x * rB.x;
+                K.ey.y = mA + mB + iA * r1.x * r1.x + iB * r2.x * r2.x;
                 var impulse = Vec2.neg(K.solve(C)); // Vec2
-                cA.subMul(mA, impulse);
-                aA -= iA * Vec2.crossVec2Vec2(rA, impulse);
-                cB.addMul(mB, impulse);
-                aB += iB * Vec2.crossVec2Vec2(rB, impulse);
+                aSweepC.subMul(mA, impulse);
+                aSweepA -= iA * Vec2.crossVec2Vec2(r1, impulse);
+                bSweepC.addMul(mB, impulse);
+                bSweepA += iB * Vec2.crossVec2Vec2(r2, impulse);
             }
-            this.m_bodyA.c_position.c.setVec2(cA);
-            this.m_bodyA.c_position.a = aA;
-            this.m_bodyB.c_position.c.setVec2(cB);
-            this.m_bodyB.c_position.a = aB;
+            this.m_bodyA.c_position.c.setVec2(aSweepC);
+            this.m_bodyA.c_position.a = aSweepA;
+            this.m_bodyB.c_position.c.setVec2(bSweepC);
+            this.m_bodyB.c_position.a = bSweepA;
             return positionError <= Settings.linearSlop
                 && angularError <= Settings.angularSlop;
         };
